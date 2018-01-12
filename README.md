@@ -12,7 +12,7 @@ Strictly follow the Java Convention when naming classes, methods, and the format
 
 Build gradle package and run Docker image:
 `$ ./gradlew build docker
-$ docker run -d -p 80:80 kspt.spbstu/json_validator`
+$ docker run -d -p 80:80 kspt.spbstu/HT_JSON`
 
 **Error:**
 
