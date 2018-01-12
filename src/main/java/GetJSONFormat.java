@@ -38,9 +38,17 @@ public class GetJSONFormat implements Server {
                 Object object = Jbuilder.fromJson(jsonRequest, Object.class);
                 jsonResponse = Jbuilder.toJson(object);
             } catch (JsonSyntaxException e) {
-                JsonObject jsonError = new JsonObject();
-                jsonError.addProperty("message", e.getMessage());
-                jsonResponse = Jbuilder.toJson(jsonError);
+               String[] error = e.getMessage().split(".+: | at ");
+                jsonResponse = Jbuilder.toJson(
+                        new JsonError(
+                                e.hashCode(),
+                                error[1],
+                                "at " + error[2],
+                                jsonRequest,
+                                request_id
+                        ));
+            } finally {
+                request_id++;
             }
             System.out.println("response:" + jsonResponse);
             http.sendResponseHeaders(CODE_OK, jsonResponse.length());
