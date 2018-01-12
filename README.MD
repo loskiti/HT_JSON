@@ -14,7 +14,8 @@ To conduct development iteratively, i.e. make commits in git as the new feature 
 
 **Start:**
 
-Run container with service docker run -d -p 80:80 github.com/username/projectname
+Run container with service docker 
+`run -d -p 80:80 github.com/username/projectname`
 
 
 **Error:**
