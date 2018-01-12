@@ -11,11 +11,11 @@ Non-functional requirements:
 
 Strictly follow the Java Convention when naming classes, methods, and the formation of Java doc
 To conduct development iteratively, i.e. make commits in git as the new feature is implemented.
-Samples: Run container with service docker run -d -p 80:80 github.com/username/projectname
 
-Start:
+Start: 
 
-To start service docker run -d -p 80:80 github.com/physhock/prX2jason
+Run container with service docker run -d -p 80:80 github.com/username/projectname
+
 
 Error:
 
