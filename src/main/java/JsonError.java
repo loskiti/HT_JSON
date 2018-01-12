@@ -2,6 +2,10 @@
  * Created by eloseva on 12.01.2018
  */
  
+
+/*
+*  Making new errors
+* */
 class JsonError {
 
     private int code;
