@@ -30,7 +30,7 @@ public class GetJSONFormat implements Server {
         this.Jbuilder= new GsonBuilder().setPrettyPrinting().create();
         this.myServer= HttpServer.create(new InetSocketAddress(PORT), 0);
         this.myServer.createContext(ROOT, http -> {
-             int request_id = 0;
+            int request_id = 0;
             InputStreamReader isr = new InputStreamReader(http.getRequestBody());
             final String jsonRequest = new BufferedReader(isr).lines().collect(Collectors.joining());
             System.out.println("request:" + jsonRequest);
