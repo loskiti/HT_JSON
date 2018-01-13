@@ -10,6 +10,11 @@ import java.util.stream.Collectors;
  * Created by eloseva on 15.12.2017
  */
 
+/**
+ * Checking Json file
+ *
+ * @throws IOException because method create() of HttpServer can throw IOException
+ */
 public class GetJSONFormat implements Server {
 
     @NotNull
@@ -21,11 +26,6 @@ public class GetJSONFormat implements Server {
     private static final int CODE_OK = 200;
     private static final String ROOT = "/";
 
-    /**
-     * Checking Json file
-     *
-     * @throws IOException because method create() of HttpServer can throw IOException
-     */
     public GetJSONFormat() throws IOException {
         this.Jbuilder= new GsonBuilder().setPrettyPrinting().create();
         this.myServer= HttpServer.create(new InetSocketAddress(PORT), 0);
@@ -39,9 +39,17 @@ public class GetJSONFormat implements Server {
                 Object object = Jbuilder.fromJson(jsonRequest, Object.class);
                 jsonResponse = Jbuilder.toJson(object);
             } catch (JsonSyntaxException e) {
-                JsonObject jsonError = new JsonObject();
-                jsonError.addProperty("message", e.getMessage());
-                jsonResponse = Jbuilder.toJson(jsonError);
+               String[] error = e.getMessage().split(".+: | at ");
+                jsonResponse = Jbuilder.toJson(
+                        new JsonError(
+                                e.hashCode(),
+                                error[1],
+                                "at " + error[2],
+                                http.getRequestURI().getPath(),
+                                request_id
+                        ));
+            } finally {
+                request_id++;
             }
             System.out.println("response:" + jsonResponse);
             http.sendResponseHeaders(CODE_OK, jsonResponse.length());
@@ -49,30 +57,27 @@ public class GetJSONFormat implements Server {
             http.close();
         });
     }
-
-    /**
-     * Starting server and waiting for a Json files
-     *
-     * @param args - does not matter
-     * @throws IOException - because constructor of Formatter can throw IOException
-     */
+/**
+ * Starting server and waiting for a Json files
+ *
+ * @param args - does not matter
+ * @throws IOException - because constructor of Formatter can throw IOException
+ */
     public static void main(String[] args) throws IOException {
         GetJSONFormat jsonFormat = new GetJSONFormat();
         jsonFormat.start();
         Runtime.getRuntime().addShutdownHook(new Thread(jsonFormat::stop));
     }
-
-    /**
-     * Implements method of bind server to HTTP port and start listening.
-     */
+/**
+ * Implements method of bind server to HTTP port and start listening.
+ */
     @Override
     public void start() {
         this.myServer.start();
     }
-
-    /**
-     * Implements method of stop listening and free all the resources.
-     */
+ /**
+  * Implements method of stop listening and free all the resources.
+  */
     @Override
     public void stop() {
         this.myServer.stop(0);
