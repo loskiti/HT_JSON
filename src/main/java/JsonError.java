@@ -1,25 +1,25 @@
 /**
- * Created by eloseva on 12.01.2018
+ * Created by eloseva on 15.12.2017
  */
+
 /*
 *  Making new errors
 * */
-
 class JsonError {
 
-    private int code;
-    private String message;
-    private String place;
+    private int errorCode;
+    private String errorMessage;
+    private String errorPlace;
     private String resource;
     private int request_id;
+
     /*
     * Constructor is fill all fields of error
     * */
-
-    JsonError(int code, String message, String place, String resource, int request_id) {
-        this.code = code;
-        this.message = message;
-        this.place = place;
+    JsonError(int errorCode, String errorMessage, String errorPlace, String resource, int request_id) {
+        this.errorCode = errorCode;
+        this.errorMessage = errorMessage;
+        this.errorPlace = errorPlace;
         this.resource = resource;
         this.request_id = request_id;
     }

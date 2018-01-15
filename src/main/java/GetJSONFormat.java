@@ -10,45 +10,46 @@ import java.util.stream.Collectors;
  * Created by eloseva on 15.12.2017
  */
 
-/**
- * Checking Json file
- *
- * @throws IOException because method create() of HttpServer can throw IOException
- */
-public class GetJSONFormat implements Server {
+public class GetJsonFormat implements Server {
 
     @NotNull
-    private final HttpServer myServer;
+    private final HttpServer server;
     @NotNull
-    private final Gson Jbuilder;
+    private final Gson builder;
 
     private static final int PORT = 80;
     private static final int CODE_OK = 200;
     private static final String ROOT = "/";
 
-    public GetJSONFormat() throws IOException {
-        this.Jbuilder= new GsonBuilder().setPrettyPrinting().create();
-        this.myServer= HttpServer.create(new InetSocketAddress(PORT), 0);
-        this.myServer.createContext(ROOT, http -> {
+    /**
+     * Checking Json file
+     *
+     * @throws IOException because method create() of HttpServer can throw IOException
+     */
+    public GetJsonFormat() throws IOException {
+         this.builder = new GsonBuilder().setPrettyPrinting().create();
+        this.server = HttpServer.create(new InetSocketAddress(PORT), 0);
+        this.server.createContext(ROOT, http -> {
             int request_id = 0;
             InputStreamReader isr = new InputStreamReader(http.getRequestBody());
             final String jsonRequest = new BufferedReader(isr).lines().collect(Collectors.joining());
             System.out.println("request:" + jsonRequest);
             String jsonResponse;
             try {
-                Object object = Jbuilder.fromJson(jsonRequest, Object.class);
-                jsonResponse = Jbuilder.toJson(object);
+                Object object = builder.fromJson(jsonRequest, Object.class);
+                jsonResponse = builder.toJson(object);
             } catch (JsonSyntaxException e) {
-               String[] error = e.getMessage().split(".+: | at ");
-                jsonResponse = Jbuilder.toJson(
+                String[] errorSplittedString = e.getMessage().split(".+: | at ");
+                jsonResponse = builder.toJson(
                         new JsonError(
                                 e.hashCode(),
-                                error[1],
-                                "at " + error[2],
+                                errorSplittedString[1],
+                                "at " + errorSplittedString[2],
                                 http.getRequestURI().getPath(),
                                 request_id
                         ));
             } finally {
+                //noinspection UnusedAssignment
                 request_id++;
             }
             System.out.println("response:" + jsonResponse);
@@ -57,29 +58,32 @@ public class GetJSONFormat implements Server {
             http.close();
         });
     }
-/**
- * Starting server and waiting for a Json files
- *
- * @param args - does not matter
- * @throws IOException - because constructor of Formatter can throw IOException
- */
+
+    /**
+     * Starting server and waiting for a Json files
+     *
+     * @param args - does not matter
+     * @throws IOException - because constructor of Formatter can throw IOException
+     */
     public static void main(String[] args) throws IOException {
-        GetJSONFormat jsonFormat = new GetJSONFormat();
+        GetJsonFormat jsonFormat = new GetJsonFormat();
         jsonFormat.start();
         Runtime.getRuntime().addShutdownHook(new Thread(jsonFormat::stop));
     }
-/**
- * Implements method of bind server to HTTP port and start listening.
- */
+
+    /**
+     * Implements method of bind server to HTTP port and start listening.
+     */
     @Override
     public void start() {
-        this.myServer.start();
+        this.server.start();
     }
- /**
-  * Implements method of stop listening and free all the resources.
-  */
+
+    /**
+     * Implements method of stop listening and free all the resources.
+     */
     @Override
     public void stop() {
-        this.myServer.stop(0);
+        this.server.stop(0);
     }
 }
